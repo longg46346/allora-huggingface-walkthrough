@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     command: python -u /app/app.py
     ports:
-      - "8000:8000"
+      - "8800:8800"
 
   worker:
     container_name: worker-new
