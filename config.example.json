@@ -75,6 +75,14 @@
             }
         },
         {
+              "topicId": 10,
+              "inferenceEntrypointName": "api-worker-reputer",
+              "loopSeconds": 15,
+              "parameters": {
+                  "InferenceEndpoint": "http://inference:8800/inference/{BlockHeight}"
+              }
+          },
+        {
             "topicId": 4,
             "inferenceEntrypointName": "api-worker-reputer",
             "loopSeconds": 15,
