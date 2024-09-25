@@ -16,7 +16,8 @@
               "inferenceEntrypointName": "api-worker-reputer",
               "loopSeconds": 15,
               "parameters": {
-                  "InferenceEndpoint": "http://inference:8800/inference/{BlockHeight}"
+                  "InferenceEndpoint": "http://inference:8800/inference/{BlockHeight}",
+                   "BlockHeight": "sys.argv[2]"
               }
           }
        ]
