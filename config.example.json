@@ -17,7 +17,7 @@
               "loopSeconds": 15,
               "parameters": {
                   "InferenceEndpoint": "http://inference:8800/inference/{BlockHeight}",
-                   "BlockHeight": "sys.argv[2]"
+                    "BlockHeight": "sys.argv[2]"
               }
           }
        ]
