@@ -1,18 +1,12 @@
 from flask import Flask, Response
 import requests
 import json
-import pandas as pd
-import torch
-from chronos import ChronosPipeline
+import random
 
 # create our Flask app
 app = Flask(__name__)
 
-# define the Hugging Face model we will use
-model_name = "amazon/chronos-t5-tiny"
-
-def get_coingecko_url(token):
-    base_url = "https://api.coingecko.com/api/v3/coins/"
+def get_simple_price(token):
     token_map = {
         'ETH': 'ethereum',
         'SOL': 'solana',
@@ -20,63 +14,110 @@ def get_coingecko_url(token):
         'BNB': 'binancecoin',
         'ARB': 'arbitrum'
     }
-    
     token = token.upper()
     if token in token_map:
-        url = f"{base_url}{token_map[token]}/market_chart?vs_currency=usd&days=30&interval=daily"
-        return url
+        return token_map[token]
     else:
-        raise ValueError("Unsupported token")
+        meme_token = get_token_symbol_from_block_height(token)
+        return meme_token
 
-# define our endpoint
-@app.route("/inference/<string:token>")
-def get_inference(token):
-    """Generate inference for given token."""
-    try:
-        # use a pipeline as a high-level helper
-        pipeline = ChronosPipeline.from_pretrained(
-            model_name,
-            device_map="auto",
-            torch_dtype=torch.bfloat16,
-        )
-    except Exception as e:
-        return Response(json.dumps({"pipeline error": str(e)}), status=500, mimetype='application/json')
 
-    try:
-        # get the data from Coingecko
-        url = get_coingecko_url(token)
-    except ValueError as e:
-        return Response(json.dumps({"error": str(e)}), status=400, mimetype='application/json')
-
+def get_token_symbol_from_block_height(block_height):
+    url = f'https://api.upshot.xyz/v2/allora/tokens-oracle/token/{block_height}'
     headers = {
         "accept": "application/json",
-        "x-cg-demo-api-key": "<Your Coingecko API key>" # replace with your API key
+        "x-api-key": "UP-0d9ed54694abdac60fd23b74"  # Replace with your API key
     }
 
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
-        df = pd.DataFrame(data["prices"])
-        df.columns = ["date", "price"]
-        df["date"] = pd.to_datetime(df["date"], unit='ms')
-        df = df[:-1] # removing today's price
-        print(df.tail(5))
-    else:
-        return Response(json.dumps({"Failed to retrieve data from the API": str(response.text)}), 
-                        status=response.status_code, 
-                        mimetype='application/json')
+        return data.get('data', {}).get('token_id')  # Extracting 'token_symbol' from the nested 'data' field
 
-    # define the context and the prediction length
-    context = torch.tensor(df["price"])
-    prediction_length = 1
+    raise ValueError("Unsupported token")
 
+
+# define our endpoint
+@app.route("/inference/<string:token>")
+def get_inference(token):
     try:
-        forecast = pipeline.predict(context, prediction_length)  # shape [num_series, num_samples, prediction_length]
-        print(forecast[0].mean().item()) # taking the mean of the forecasted prediction
-        return Response(str(forecast[0].mean().item()), status=200)
+        github_url = "https://raw.githubusercontent.com/dongqn/allora-huggingface-walkthrough/refs/heads/main/eth"
+        response = requests.get(github_url)
+        if response.status_code != 200:
+            raise Exception(f"Failed to fetch data from GitHub: {response.status_code}")
+
+        # Assuming the fetched data is plain text
+        data = response.json()  # This will load the JSON data
+        value_percent = data.get("value", None)
+        print(value_percent)
+        base_url = "https://api.coingecko.com/api/v3/simple/price?ids="
+        current_token = get_simple_price(token)
+        url = f"{base_url}{current_token}&vs_currencies=usd"
+        headers = {
+            "accept": "application/json",
+            "x-cg-demo-api-key": "<Your Coingecko API key>"  # replace with your API key
+        }
+
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            data = response.json()
+            if token == 'BTC':
+                price1 = data["bitcoin"]["usd"] + data["bitcoin"]["usd"] * (value_percent / 100)
+                price2 = data["bitcoin"]["usd"] - data["bitcoin"]["usd"] * (value_percent / 100)
+            if token == 'ETH':
+                price1 = data["ethereum"]["usd"] + data["ethereum"]["usd"] * (value_percent / 100)
+                price2 = data["ethereum"]["usd"] - data["ethereum"]["usd"] * (value_percent / 100)
+            if token == 'SOL':
+                price1 = data["solana"]["usd"] + data["solana"]["usd"] * (value_percent / 100)
+                price2 = data["solana"]["usd"] - data["solana"]["usd"] * (value_percent / 100)
+            if token == 'BNB':
+                price1 = data["binancecoin"]["usd"] + data["binancecoin"]["usd"] * (value_percent / 100)
+                price2 = data["binancecoin"]["usd"] - data["binancecoin"]["usd"] * (value_percent / 100)
+            if token == 'ARB':
+                price1 = data["arbitrum"]["usd"] + data["arbitrum"]["usd"] * (value_percent / 100)
+                price2 = data["arbitrum"]["usd"] - data["arbitrum"]["usd"] * (value_percent / 100)
+            else:
+                price1 = data[current_token]["usd"] + data[current_token]["usd"] * (value_percent / 100)
+                price2 = data[current_token]["usd"] - data[current_token]["usd"] * (value_percent / 100)
+
+            random_float = str(round(random.uniform(price1, price2), 7))
+        return random_float
+
     except Exception as e:
-        return Response(json.dumps({"error": str(e)}), status=500, mimetype='application/json')
+        base_url = "https://api.coingecko.com/api/v3/simple/price?ids="
+        current_token = get_simple_price(token)
+        url = f"{base_url}{current_token}&vs_currencies=usd"
+        headers = {
+            "accept": "application/json",
+            "x-cg-demo-api-key": "API"  # replace with your API key
+        }
+
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            data = response.json()
+            if token == 'BTC':
+                price1 = data["bitcoin"]["usd"] + data["bitcoin"]["usd"] * (value_percent / 100)
+                price2 = data["bitcoin"]["usd"] - data["bitcoin"]["usd"] * (value_percent / 100)
+            if token == 'ETH':
+                price1 = data["ethereum"]["usd"] + data["ethereum"]["usd"] * (value_percent / 100)
+                price2 = data["ethereum"]["usd"] - data["ethereum"]["usd"] * (value_percent / 100)
+            if token == 'SOL':
+                price1 = data["solana"]["usd"] + data["solana"]["usd"] * (value_percent / 100)
+                price2 = data["solana"]["usd"] - data["solana"]["usd"] * (value_percent / 100)
+            if token == 'BNB':
+                price1 = data["binancecoin"]["usd"] + data["binancecoin"]["usd"] * (value_percent / 100)
+                price2 = data["binancecoin"]["usd"] - data["binancecoin"]["usd"] * (value_percent / 100)
+            if token == 'ARB':
+                price1 = data["arbitrum"]["usd"] + data["arbitrum"]["usd"] * (value_percent / 100)
+                price2 = data["arbitrum"]["usd"] - data["arbitrum"]["usd"] * (value_percent / 100)
+            else:
+                price1 = data[current_token]["usd"] + data[current_token]["usd"] * (value_percent / 100)
+                price2 = data[current_token]["usd"] - data[current_token]["usd"] * (value_percent / 100)
+
+            random_float = str(round(random.uniform(price1, price2), 7))
+        return random_float
+
 
 # run our Flask app
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8800, debug=True)
+    app.run(host="0.0.0.0", port=8000, debug=True)
