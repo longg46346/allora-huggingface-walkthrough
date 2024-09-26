@@ -6,6 +6,7 @@ import random
 # create our Flask app
 app = Flask(__name__)
 
+# Map token symbols to CoinGecko API ids
 def get_simple_price(token):
     token_map = {
         'ETH': 'ethereum',
@@ -15,109 +16,46 @@ def get_simple_price(token):
         'ARB': 'arbitrum'
     }
     token = token.upper()
-    if token in token_map:
-        return token_map[token]
-    else:
-        meme_token = get_token_symbol_from_block_height(token)
-        return meme_token
+    return token_map.get(token, None)
 
-
-def get_token_symbol_from_block_height(block_height):
-    url = f'https://api.upshot.xyz/v2/allora/tokens-oracle/token/{block_height}'
-    headers = {
-        "accept": "application/json",
-        "x-api-key": "UP-0d9ed54694abdac60fd23b74"  # Replace with your API key
-    }
-
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        data = response.json()
-        return data.get('data', {}).get('token_id')  # Extracting 'token_symbol' from the nested 'data' field
-
-    raise ValueError("Unsupported token")
-
-
-# define our endpoint
+# define our endpoint for price inference
 @app.route("/inference/<string:token>")
 def get_inference(token):
     try:
-        github_url = "https://raw.githubusercontent.com/dongqn/allora-huggingface-walkthrough/refs/heads/main/eth"
-        response = requests.get(github_url)
-        if response.status_code != 200:
-            raise Exception(f"Failed to fetch data from GitHub: {response.status_code}")
+        value_percent = 5  # You can dynamically adjust this percentage based on your strategy
+        print(f"Prediction percentage: {value_percent}%")
 
-        # Assuming the fetched data is plain text
-        data = response.json()  # This will load the JSON data
-        value_percent = data.get("value", None)
-        print(value_percent)
-        base_url = "https://api.coingecko.com/api/v3/simple/price?ids="
+        # Prepare API URL and headers
         current_token = get_simple_price(token)
-        url = f"{base_url}{current_token}&vs_currencies=usd"
+        if not current_token:
+            return f"Unsupported token: {token}", 400
+
+        url = f"https://api.coingecko.com/api/v3/simple/price?ids={current_token}&vs_currencies=usd"
         headers = {
             "accept": "application/json",
-            "x-cg-demo-api-key": "<Your Coingecko API key>"  # replace with your API key
+            "x-cg-demo-api-key": "CG-JFn8hKYwt2fqCuowhqRZuMFM"  # Replace with your API key if needed
         }
 
+        # Call the CoinGecko API to get the current price
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             data = response.json()
-            if token == 'BTC':
-                price1 = data["bitcoin"]["usd"] + data["bitcoin"]["usd"] * (value_percent / 100)
-                price2 = data["bitcoin"]["usd"] - data["bitcoin"]["usd"] * (value_percent / 100)
-            if token == 'ETH':
-                price1 = data["ethereum"]["usd"] + data["ethereum"]["usd"] * (value_percent / 100)
-                price2 = data["ethereum"]["usd"] - data["ethereum"]["usd"] * (value_percent / 100)
-            if token == 'SOL':
-                price1 = data["solana"]["usd"] + data["solana"]["usd"] * (value_percent / 100)
-                price2 = data["solana"]["usd"] - data["solana"]["usd"] * (value_percent / 100)
-            if token == 'BNB':
-                price1 = data["binancecoin"]["usd"] + data["binancecoin"]["usd"] * (value_percent / 100)
-                price2 = data["binancecoin"]["usd"] - data["binancecoin"]["usd"] * (value_percent / 100)
-            if token == 'ARB':
-                price1 = data["arbitrum"]["usd"] + data["arbitrum"]["usd"] * (value_percent / 100)
-                price2 = data["arbitrum"]["usd"] - data["arbitrum"]["usd"] * (value_percent / 100)
-            else:
-                price1 = data[current_token]["usd"] + data[current_token]["usd"] * (value_percent / 100)
-                price2 = data[current_token]["usd"] - data[current_token]["usd"] * (value_percent / 100)
+            current_price = data[current_token]["usd"]
 
-            random_float = str(round(random.uniform(price1, price2), 7))
-        return random_float
+            # Apply percentage to calculate price range for prediction
+            price1 = current_price + current_price * (value_percent / 100)
+            price2 = current_price - current_price * (value_percent / 100)
+
+            # Generate a random price within the calculated range
+            predicted_price = round(random.uniform(price1, price2), 7)
+            return str(predicted_price)
+        else:
+            return f"Failed to fetch price for {token}: {response.status_code}", 400
 
     except Exception as e:
-        base_url = "https://api.coingecko.com/api/v3/simple/price?ids="
-        current_token = get_simple_price(token)
-        url = f"{base_url}{current_token}&vs_currencies=usd"
-        headers = {
-            "accept": "application/json",
-            "x-cg-demo-api-key": "API"  # replace with your API key
-        }
-
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            data = response.json()
-            if token == 'BTC':
-                price1 = data["bitcoin"]["usd"] + data["bitcoin"]["usd"] * (value_percent / 100)
-                price2 = data["bitcoin"]["usd"] - data["bitcoin"]["usd"] * (value_percent / 100)
-            if token == 'ETH':
-                price1 = data["ethereum"]["usd"] + data["ethereum"]["usd"] * (value_percent / 100)
-                price2 = data["ethereum"]["usd"] - data["ethereum"]["usd"] * (value_percent / 100)
-            if token == 'SOL':
-                price1 = data["solana"]["usd"] + data["solana"]["usd"] * (value_percent / 100)
-                price2 = data["solana"]["usd"] - data["solana"]["usd"] * (value_percent / 100)
-            if token == 'BNB':
-                price1 = data["binancecoin"]["usd"] + data["binancecoin"]["usd"] * (value_percent / 100)
-                price2 = data["binancecoin"]["usd"] - data["binancecoin"]["usd"] * (value_percent / 100)
-            if token == 'ARB':
-                price1 = data["arbitrum"]["usd"] + data["arbitrum"]["usd"] * (value_percent / 100)
-                price2 = data["arbitrum"]["usd"] - data["arbitrum"]["usd"] * (value_percent / 100)
-            else:
-                price1 = data[current_token]["usd"] + data[current_token]["usd"] * (value_percent / 100)
-                price2 = data[current_token]["usd"] - data[current_token]["usd"] * (value_percent / 100)
-
-            random_float = str(round(random.uniform(price1, price2), 7))
-        return random_float
-
+        return str(e), 400
 
 # run our Flask app
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8800, debug=True)
+    
