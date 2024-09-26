@@ -82,7 +82,7 @@
                 "InferenceEndpoint": "http://inference:8800/inference/{Token}",
                 "Token": "SOL"
             }
-        }        
+        },      
          {
             "topicId": 9,
             "inferenceEntrypointName": "api-worker-reputer",
