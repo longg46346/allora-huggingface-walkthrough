@@ -33,7 +33,7 @@ def get_inference(token):
         url = f"https://api.coingecko.com/api/v3/simple/price?ids={current_token}&vs_currencies=usd"
         headers = {
             "accept": "application/json",
-            "x-cg-demo-api-key": "CG-JFn8hKYwt2fqCuowhqRZuMFM"  # Replace with your API key if needed
+            "x-cg-demo-api-key": "<Your Coingecko API key>"  # Replace with your API key if needed
         }
 
         # Call the CoinGecko API to get the current price
