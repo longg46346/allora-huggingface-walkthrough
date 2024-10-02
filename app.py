@@ -1,61 +1,32 @@
-from flask import Flask, Response
-import requests
-import json
+from flask import Flask
 import random
 
-# create our Flask app
 app = Flask(__name__)
 
-# Map token symbols to CoinGecko API ids
-def get_simple_price(token):
-    token_map = {
-        'ETH': 'ethereum',
-        'SOL': 'solana',
-        'BTC': 'bitcoin',
-        'BNB': 'binancecoin',
-        'ARB': 'arbitrum'
-    }
-    token = token.upper()
-    return token_map.get(token, None)
+# In-memory storage for tracking the previous inference (probability of win)
+inference_history = {
+    'republican_win_prob': 0.5  # Start at 50% chance
+}
 
-# define our endpoint for price inference
-@app.route("/inference/<string:token>")
-def get_inference(token):
+# Endpoint to generate a daily inference
+@app.route("/daily_inference")
+def daily_inference():
     try:
-        value_percent = 5  # You can dynamically adjust this percentage based on your strategy
-        print(f"Prediction percentage: {value_percent}%")
+        # Simulate a random fluctuation in the probability (within +/- 5%)
+        fluctuation = random.uniform(-0.05, 0.05)
+        today_prob = round(inference_history['republican_win_prob'] + fluctuation, 4)
 
-        # Prepare API URL and headers
-        current_token = get_simple_price(token)
-        if not current_token:
-            return f"Unsupported token: {token}", 400
+        # Keep probability within [0, 1] range
+        today_prob = max(0, min(1, today_prob))
 
-        url = f"https://api.coingecko.com/api/v3/simple/price?ids={current_token}&vs_currencies=usd"
-        headers = {
-            "accept": "application/json",
-            "x-cg-demo-api-key": "<Your Coingecko API key>"  # Replace with your API key if needed
-        }
+        # Update the inference history with today's value
+        inference_history['republican_win_prob'] = today_prob
 
-        # Call the CoinGecko API to get the current price
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            data = response.json()
-            current_price = data[current_token]["usd"]
-
-            # Apply percentage to calculate price range for prediction
-            price1 = current_price + current_price * (value_percent / 100)
-            price2 = current_price - current_price * (value_percent / 100)
-
-            # Generate a random price within the calculated range
-            predicted_price = round(random.uniform(price1, price2), 7)
-            return str(predicted_price)
-        else:
-            return f"Failed to fetch price for {token}: {response.status_code}", 400
+        # Return only the inference result as a float number
+        return str(today_prob)
 
     except Exception as e:
         return str(e), 400
 
-# run our Flask app
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8800, debug=True)
-    
