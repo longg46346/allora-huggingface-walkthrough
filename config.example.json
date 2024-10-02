@@ -12,84 +12,19 @@
     },
     "worker": [
         {
-            "topicId": 1,
+            "topicId": 10,
             "inferenceEntrypointName": "api-worker-reputer",
             "loopSeconds": 15,
             "parameters": {
-                "InferenceEndpoint": "http://inference:8800/inference/{Token}",
-                "Token": "ETH"
+                "InferenceEndpoint": "http://inference:8800/inference/{tokenorblockheightorparty}"
             }
         },
         {
-            "topicId": 3,
+            "topicId": 11,
             "inferenceEntrypointName": "api-worker-reputer",
             "loopSeconds": 15,
             "parameters": {
-                "InferenceEndpoint": "http://inference:8800/inference/{Token}",
-                "Token": "BTC"
-            }
-        },
-        {
-            "topicId": 5,
-            "inferenceEntrypointName": "api-worker-reputer",
-            "loopSeconds": 15,
-            "parameters": {
-                "InferenceEndpoint": "http://inference:8800/inference/{Token}",
-                "Token": "SOL"
-            }
-        },
-         {
-            "topicId": 7,
-            "inferenceEntrypointName": "api-worker-reputer",
-            "loopSeconds": 15,
-            "parameters": {
-                "InferenceEndpoint": "http://inference:8800/inference/{Token}",
-                "Token": "ETH"
-            }
-        },
-         {
-            "topicId": 8,
-            "inferenceEntrypointName": "api-worker-reputer",
-            "loopSeconds": 15,
-            "parameters": {
-                "InferenceEndpoint": "http://inference:8800/inference/{Token}",
-                "Token": "BNB"
-            }
-        },
-        {
-            "topicId": 2,
-            "inferenceEntrypointName": "api-worker-reputer",
-            "loopSeconds": 15,
-            "parameters": {
-                "InferenceEndpoint": "http://inference:8800/inference/{Token}",
-                "Token": "ETH"
-            }
-        },
-        {
-            "topicId": 4,
-            "inferenceEntrypointName": "api-worker-reputer",
-            "loopSeconds": 15,
-            "parameters": {
-                "InferenceEndpoint": "http://inference:8800/inference/{Token}",
-                "Token": "BTC"
-            }
-        },
-        {
-            "topicId": 6,
-            "inferenceEntrypointName": "api-worker-reputer",
-            "loopSeconds": 15,
-            "parameters": {
-                "InferenceEndpoint": "http://inference:8800/inference/{Token}",
-                "Token": "SOL"
-            }
-        },      
-         {
-            "topicId": 9,
-            "inferenceEntrypointName": "api-worker-reputer",
-            "loopSeconds": 15,
-            "parameters": {
-                "InferenceEndpoint": "http://inference:8800/inference/{Token}",
-                "Token": "ARB"
+                "InferenceEndpoint": "http://inference:8800/inference/topic11/{team}"
             }
         }
     ]
