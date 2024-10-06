@@ -1,9 +1,10 @@
-from flask import Flask, Response
+from flask import Flask, jsonify
 import requests
-import json
 import random
+import numpy as np
+from datetime import datetime, timedelta
 
-# create our Flask app
+
 app = Flask(__name__)
 
 # Map token symbols to CoinGecko API ids
@@ -18,44 +19,57 @@ def get_simple_price(token):
     token = token.upper()
     return token_map.get(token, None)
 
-# define our endpoint for price inference
+
+def get_historical_prices(token):
+    current_token = get_simple_price(token)
+    if not current_token:
+        return None
+
+
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=7)
+
+    url = f"https://api.coingecko.com/api/v3/coins/{current_token}/market_chart?vs_currency=usd&days=7&interval=daily"
+    
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        prices = [entry[1] for entry in data['prices']]  
+        return prices
+    return None
+
+
+def calculate_volatility(prices):
+    log_returns = np.diff(np.log(prices))  
+    volatility = np.std(log_returns) 
+    return volatility
+
+
 @app.route("/inference/<string:token>")
 def get_inference(token):
     try:
-        value_percent = 5  # You can dynamically adjust this percentage based on your strategy
-        print(f"Prediction percentage: {value_percent}%")
 
-        # Prepare API URL and headers
-        current_token = get_simple_price(token)
-        if not current_token:
-            return f"Unsupported token: {token}", 400
+        historical_prices = get_historical_prices(token)
+        if not historical_prices:
+            return jsonify({"error": f"Failed to fetch historical prices for {token}"}), 400
 
-        url = f"https://api.coingecko.com/api/v3/simple/price?ids={current_token}&vs_currencies=usd"
-        headers = {
-            "accept": "application/json",
-            "x-cg-demo-api-key": "<Your Coingecko API key>"  # Replace with your API key if needed
-        }
 
-        # Call the CoinGecko API to get the current price
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            data = response.json()
-            current_price = data[current_token]["usd"]
+        volatility = calculate_volatility(historical_prices)
+        current_price = historical_prices[-1] 
 
-            # Apply percentage to calculate price range for prediction
-            price1 = current_price + current_price * (value_percent / 100)
-            price2 = current_price - current_price * (value_percent / 100)
 
-            # Generate a random price within the calculated range
-            predicted_price = round(random.uniform(price1, price2), 7)
-            return str(predicted_price)
-        else:
-            return f"Failed to fetch price for {token}: {response.status_code}", 400
+        price1 = current_price + current_price * volatility
+        price2 = current_price - current_price * volatility
+
+
+        predicted_price = round(random.uniform(price1, price2), 7)
+
+
+        return str(predicted_price)
 
     except Exception as e:
-        return str(e), 400
+        return jsonify({"error": str(e)}), 400
 
-# run our Flask app
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8800, debug=True)
-    
