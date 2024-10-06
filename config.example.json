@@ -98,5 +98,7 @@
             "loopSeconds": 15,
             "parameters": {
                 "InferenceEndpoint": "http://inference:8800/inference/{blockheight}"
+            }
+        }
     ]
 }
