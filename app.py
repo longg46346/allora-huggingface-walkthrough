@@ -13,7 +13,7 @@ CG_Keys = [
 ]
 
 UP_Keys = [
-    "<Your UP API key>Y"
+    "<Your UP API key>"
 
 ]
 
