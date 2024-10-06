@@ -8,12 +8,12 @@ import threading
 app = Flask(__name__)
 
 CG_Keys = [
-    "YOUR_KEY"
+    "<Your Coingecko API key>"
 
 ]
 
 UP_Keys = [
-    "YOUR_KEY"
+    "<Your UP API key>Y"
 
 ]
 
