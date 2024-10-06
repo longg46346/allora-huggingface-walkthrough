@@ -6,7 +6,7 @@
         "gas": "1000000",
         "gasAdjustment": 1.5,
         "nodeRpc": "https://allora-testnet-rpc.itrocket.net",
-        "maxRetries": 9,
+        "maxRetries": 10,
         "delay": 5,
         "submitTx": true
     },
@@ -91,6 +91,12 @@
                 "InferenceEndpoint": "http://inference:8800/inference/{Token}",
                 "Token": "ARB"
             }
-        }
+        },
+        {
+            "topicId": 10,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 15,
+            "parameters": {
+                "InferenceEndpoint": "http://inference:8800/inference/{blockheight}"
     ]
 }
