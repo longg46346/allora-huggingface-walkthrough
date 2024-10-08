@@ -1,7 +1,7 @@
-from flask import Flask, Response
+from flask import Flask, Response, jsonify
 import requests
-import json
 import random
+import json
 
 # create our Flask app
 app = Flask(__name__)
@@ -18,17 +18,29 @@ def get_simple_price(token):
     token = token.upper()
     return token_map.get(token, None)
 
+# Initialize a dictionary to store past inferences and regrets
+past_inferences = {}
+past_regrets = {}
+
+# Define a function to calculate regret
+def calculate_regret(new_inference, token):
+    if token in past_inferences:
+        previous_inference = past_inferences[token]
+        regret = new_inference - previous_inference
+        return regret
+    else:
+        return None
+
 # define our endpoint for price inference
 @app.route("/inference/<string:token>")
 def get_inference(token):
     try:
         value_percent = 5  # You can dynamically adjust this percentage based on your strategy
-        print(f"Prediction percentage: {value_percent}%")
 
         # Prepare API URL and headers
         current_token = get_simple_price(token)
         if not current_token:
-            return f"Unsupported token: {token}", 400
+            return jsonify({"error": f"Unsupported token: {token}"}), 400
 
         url = f"https://api.coingecko.com/api/v3/simple/price?ids={current_token}&vs_currencies=usd"
         headers = {
@@ -48,6 +60,19 @@ def get_inference(token):
 
             # Generate a random price within the calculated range
             predicted_price = round(random.uniform(price1, price2), 7)
+
+            # Calculate regret
+            regret = calculate_regret(predicted_price, token)
+            if regret is not None:
+                regret_type = "Positive regret (better performance)" if regret > 0 else "Negative regret (worse performance)"
+            else:
+                regret_type = "No previous inference to calculate regret."
+
+            # Update past inferences and regrets
+            past_inferences[token] = predicted_price
+            past_regrets[token] = regret if regret is not None else 0
+
+            # Return the result as JSON
             return str(predicted_price)
         else:
             return f"Failed to fetch price for {token}: {response.status_code}", 400
@@ -58,4 +83,3 @@ def get_inference(token):
 # run our Flask app
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8800, debug=True)
-    
