@@ -8,16 +8,335 @@ services:
     ports:
       - "8800:8800"
 
-  worker:
-    container_name: worker-new
+  worker_1:
+    container_name: worker-new-1
     image: alloranetwork/allora-offchain-node:latest
     volumes:
-      - ./worker-data:/data
+      - ./worker-data1:/data
     depends_on:
       - inference
     env_file:
-      - ./worker-data/env_file
-  
+      - ./worker-data1/env_file
+
+  worker_2:
+    container_name: worker-new-2
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data2:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data2/env_file
+
+  worker_3:
+    container_name: worker-new-3
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data3:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data3/env_file
+
+  worker_4:
+    container_name: worker-new-4
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data4:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data4/env_file
+
+  worker_5:
+    container_name: worker-new-5
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data5:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data5/env_file
+
+  worker_6:
+    container_name: worker-new-6
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data6:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data6/env_file
+
+  worker_7:
+    container_name: worker-new-7
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data7:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data7/env_file
+
+  worker_8:
+    container_name: worker-new-8
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data8:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data8/env_file
+
+  worker_9:
+    container_name: worker-new-9
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data9:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data9/env_file
+
+  worker_10:
+    container_name: worker-new-10
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data10:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data10/env_file
+
+  worker_11:
+    container_name: worker-new-11
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data11:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data11/env_file
+
+  worker_12:
+    container_name: worker-new-12
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data12:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data12/env_file
+
+  worker_13:
+    container_name: worker-new-13
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data13:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data13/env_file
+
+  worker_14:
+    container_name: worker-new-14
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data14:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data14/env_file
+
+  worker_15:
+    container_name: worker-new-15
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data15:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data15/env_file
+
+  worker_16:
+    container_name: worker-new-16
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data16:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data16/env_file
+
+  worker_17:
+    container_name: worker-new-17
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data17:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data17/env_file
+
+  worker_18:
+    container_name: worker-new-18
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data18:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data18/env_file
+
+  worker_19:
+    container_name: worker-new-19
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data19:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data19/env_file
+
+  worker_20:
+    container_name: worker-new-20
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data20:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data20/env_file
+
+  worker_21:
+    container_name: worker-new-21
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data21:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data21/env_file
+
+  worker_22:
+    container_name: worker-new-22
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data22:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data22/env_file
+
+  worker_23:
+    container_name: worker-new-23
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data23:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data23/env_file
+
+  worker_24:
+    container_name: worker-new-24
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data24:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data24/env_file
+
+  worker_25:
+    container_name: worker-new-25
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data25:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data25/env_file
+
+  worker_26:
+    container_name: worker-new-26
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data26:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data26/env_file
+
+  worker_27:
+    container_name: worker-new-27
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data27:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data27/env_file
+
+  worker_28:
+    container_name: worker-new-28
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data28:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data28/env_file
+
+  worker_29:
+    container_name: worker-new-29
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data29:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data29/env_file
+
+  worker_30:
+    container_name: worker-new-30
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data30:/data
+    depends_on:
+      - inference
+    env_file:
+      - ./worker-data30/env_file
+
 volumes:
   inference-data:
-  worker-data:
+  worker-data1:
+  worker-data2:
+  worker-data3:
+  worker-data4:
+  worker-data5:
+  worker-data6:
+  worker-data7:
+  worker-data8:
+  worker-data9:
+  worker-data10:
+  worker-data11:
+  worker-data12:
+  worker-data13:
+  worker-data14:
+  worker-data15:
+  worker-data16:
+  worker-data17:
+  worker-data18:
+  worker-data19:
+  worker-data20:
+  worker-data21:
+  worker-data22:
+  worker-data23:
+  worker-data24:
+  worker-data25:
+  worker-data26:
+  worker-data27:
+  worker-data28:
+  worker-data29:
+  worker-data30:
