@@ -3,11 +3,14 @@
         "addressKeyName": "test",
         "addressRestoreMnemonic": "just clap slim ...",
         "alloraHomeDir": "",
-        "gas": "1000000",
+        "gas": "auto",
         "gasAdjustment": 1.5,
+        "gasPrices": 0.08,
+        "maxFees": 200000,
         "nodeRpc": "https://allora-testnet-rpc.itrocket.net",
-        "maxRetries": 9,
-        "delay": 5,
+        "maxRetries": 5,
+        "retryDelay": 3,
+        "accountSequenceRetryDelay": 5,
         "submitTx": true
     },
     "worker": [
